@@ -11,7 +11,7 @@
 ## end
 ##
 
-coreo_aws_ec2_securityGroups "vpn-elb-sg" do
+coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
   description "Open vpn to the world"
   vpc "${VPC_NAME}"
@@ -20,22 +20,22 @@ coreo_aws_ec2_securityGroups "vpn-elb-sg" do
             :direction => :ingress,
             :protocol => :tcp,
             :ports => [1199],
-            :cidrs => ["0.0.0.0/0"],
+            :cidrs => ${VPN_ACCESS_CIRDS},
           },{ 
             :direction => :egress,
             :protocol => :tcp,
             :ports => ["0..65535"],
-            :cidrs => ["0.0.0.0/0"],
+            :cidrs => ${VPN_ACCESS_CIRDS},
           }
     ]
 end
 
-coreo_aws_ec2_elb "vpn-elb" do
+coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   action :sustain
   type "public"
   vpc "${VPC_NAME}"
   subnet "${PUBLIC_SUBNET_NAME}"
-  security_groups ["vpn-elb-sg"]
+  security_groups ["${VPN_NAME}-elb-sg"]
   listeners [
              {
                :elb_protocol => 'tcp', 
@@ -48,14 +48,14 @@ coreo_aws_ec2_elb "vpn-elb" do
   health_check_port "1199"
 end
 
-coreo_aws_route53_record "vpn-prod" do
+coreo_aws_route53_record "${VPN_DNS_PREFIX}" do
   action :sustain
   type "CNAME"
-  zone "creditshop.com"
-  values ["STACK::coreo_aws_ec2_elb.vpn-elb.dns_name"]
+  zone "${ZONE}"
+  values ["STACK::coreo_aws_ec2_elb.${VPN_NAME}-elb.dns_name"]
 end
 
-coreo_aws_ec2_securityGroups "vpn-sg" do
+coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
   action :sustain
   description "Open vpn connections to the world"
   vpc "${VPC_NAME}"
@@ -64,12 +64,12 @@ coreo_aws_ec2_securityGroups "vpn-sg" do
             :direction => :ingress,
             :protocol => :tcp,
             :ports => [1199],
-            :groups => ["vpn-elb-sg"],
+            :groups => ["${VPN_NAME}-elb-sg"],
           },{ 
             :direction => :ingress,
             :protocol => :tcp,
             :ports => [22],
-            :cidrs => ["10.0.0.0/8"],
+            :cidrs => ${VPN_SSH_ACCESS_CIDRS},
           },{ 
             :direction => :egress,
             :protocol => :tcp,
@@ -79,9 +79,9 @@ coreo_aws_ec2_securityGroups "vpn-sg" do
     ]
 end
 
-coreo_aws_iam_policy "vpn" do
+coreo_aws_iam_policy "${VPN_NAME}" do
   action :sustain
-  policy_name "AllowRoute53Management"
+  policy_name "${VPN_NAME}Route53Management"
   policy_document <<-EOH
 {
   "Statement": [
@@ -99,26 +99,26 @@ coreo_aws_iam_policy "vpn" do
 EOH
 end
 
-coreo_aws_iam_instance_profile "vpn" do
+coreo_aws_iam_instance_profile "${VPN_NAME}" do
   action :sustain
-  policies ["vpn"]
+  policies ["${VPN_NAME}"]
 end
 
-coreo_aws_ec2_instance "vpn" do
+coreo_aws_ec2_instance "${VPN_NAME}" do
   action :define
-  image_id "ami-802095e8"
-  size "t1.micro"
-  security_groups ["vpn-sg"]
-  ssh_key "tools-prod"
-  role "vpn"
-  disable_cc_client true
+  image_id "${VPN_AMI_ID}"
+  size "${VPN_INSTANCE_TYPE}"
+  security_groups ["${VPN_NAME}-sg"]
+  ssh_key "${VPN_SSH_KEY_NAME}"
+  role "${VPN_NAME}"
+  disable_cc_client ${VPN_DISABLE_CC_CLIENT}
 end
 
-coreo_aws_ec2_autoscaling "vpn" do
+coreo_aws_ec2_autoscaling "${VPN_NAME}" do
   action :sustain 
   minimum 1
   maximum 1
-  server_definition "vpn"
+  server_definition "${VPN_NAME}"
   subnet "${PRIVATE_SUBNET_NAME}"
-  elbs ["vpn-elb"]
+  elbs ["${VPN_NAME}-elb"]
 end
