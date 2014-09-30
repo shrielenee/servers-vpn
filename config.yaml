@@ -8,3 +8,76 @@
 ##     type: string
 
 variables:
+  PRIVATE_SUBNET_NAME:
+    default:
+    description:
+    overrides:
+    required: true
+    type:
+  PUBLIC_SUBNET_NAME:
+    default:
+    description:
+    overrides:
+    required: true
+    type:
+  VPC_NAME:
+    default:
+    description:
+    overrides:
+    required: true
+    type:
+  VPN_ACCESS_CIRDS:
+    default:
+      - 0.0.0.0/0
+    description:
+    overrides:
+    required: true
+    type: array
+  VPN_AMI_ID:
+    default: ami-08842d60
+    description: the AMI id to use for the vpn client
+    overrides:
+    required: true
+    type:
+  VPN_DISABLE_CC_CLIENT:
+    default: false
+    description: should the cloudcoreo client be disbaled on the vpn server
+    overrides:
+    required: true
+    type: boolean
+  VPN_DNS_PREFIX:
+    default: 
+    description: the dns entry to create for the VPN server (<prefix>.<zone>)
+    overrides:
+    required: true
+    type:
+  VPN_INSTANCE_TYPE:
+    default: t1.micro
+    description:
+    overrides:
+    required: true
+    type:
+  VPN_NAME:
+    default: vpn
+    description: the name of the vpn server to launch
+    overrides:
+    required: true
+  VPN_SSH_ACCESS_CIDRS:
+    default:
+      - 10.0.0.0/8
+    description: The cidrs from where you should be able to ssh in
+    overrides:
+    required: true
+    type: array
+  VPN_SSH_KEY_NAME:
+    default: 
+    description: What key should the vpn instance be launched with?
+    overrides:
+    required: true
+    type:
+  ZONE:
+    default:
+    description: the dns entry for the zone (i.e. example.com)
+    overrides:
+    required: true
+    type:
