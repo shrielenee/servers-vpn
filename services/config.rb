@@ -51,7 +51,7 @@ end
 coreo_aws_route53_record "${VPN_NAME}" do
   action :sustain
   type "CNAME"
-  zone "${ZONE}"
+  zone "creditshopcloud.com"
   values ["STACK::coreo_aws_ec2_elb.${VPN_NAME}-elb.dns_name"]
 end
 
