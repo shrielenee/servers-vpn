@@ -48,7 +48,7 @@ coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   health_check_port "1199"
 end
 
-coreo_aws_route53_record "${VPN_DNS_PREFIX}" do
+coreo_aws_route53_record "${VPN_NAME}" do
   action :sustain
   type "CNAME"
   zone "${ZONE}"
