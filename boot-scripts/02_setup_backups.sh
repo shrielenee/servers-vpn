@@ -10,6 +10,8 @@
 
 set -eux
 
+pip install filechunkio
+
 if ! rpm -qa | grep -q cloudcoreo-directory-backup; then
     yum install -y cloudcoreo-directory-backup
 fi
@@ -22,11 +24,10 @@ script_dir="/var/tmp/cloudcoreo-directory-backup-scripts"
 mkdir -p "$script_dir"
 cat <<EOF > "${script_dir}/pre-restore.sh"
 #!/bin/bash
-/etc/init.d/openvpn stop 2>&1
 EOF
 cat <<EOF > "${script_dir}/post-restore.sh"
 #!/bin/bash
-/etc/init.d/openvpn start
+/etc/init.d/openvpn restart
 exit 0
 EOF
 
