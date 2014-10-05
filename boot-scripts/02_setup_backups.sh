@@ -22,11 +22,11 @@ script_dir="/var/tmp/cloudcoreo-directory-backup-scripts"
 mkdir -p "$script_dir"
 cat <<EOF > "${script_dir}/pre-restore.sh"
 #!/bin/bash
-exit 0
+/etc/init.d/openvpn stop 2>&1
 EOF
 cat <<EOF > "${script_dir}/post-restore.sh"
 #!/bin/bash
-/etc/init.d/openvpn restart
+/etc/init.d/openvpn start
 exit 0
 EOF
 
