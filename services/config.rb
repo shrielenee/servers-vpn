@@ -79,7 +79,7 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
     ]
 end
 
-coreo_aws_iam_policy "${VPN_NAME}" do
+coreo_aws_iam_policy "${VPN_NAME}-route53" do
   action :sustain
   policy_name "${VPN_NAME}Route53Management"
   policy_document <<-EOH
@@ -99,9 +99,49 @@ coreo_aws_iam_policy "${VPN_NAME}" do
 EOH
 end
 
+coreo_aws_iam_policy "${VPN_NAME}-backup" do
+  action :sustain
+  policy_name "Allow${VPN_NAME}S3Backup"
+  policy_document <<-EOH
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": [
+          "arn:aws:s3:::${BACKUP_BUCKET}/${REGION}/vpn/${ENV}/${VPN_NAME}",
+          "arn:aws:s3:::${BACKUP_BUCKET}/${REGION}/vpn/${ENV}/${VPN_NAME}/*"
+      ],
+      "Action": [ 
+          "s3:*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::*",
+      "Action": [
+          "s3:ListAllMyBuckets"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Resource": [
+          "arn:aws:s3:::${BACKUP_BUCKET}",
+          "arn:aws:s3:::${BACKUP_BUCKET}/*"
+      ],
+      "Action": [
+          "s3:GetBucket*", 
+          "s3:List*" 
+      ]
+    }
+  ]
+}
+EOH
+end
+
+
 coreo_aws_iam_instance_profile "${VPN_NAME}" do
   action :sustain
-  policies ["${VPN_NAME}"]
+  policies ["${VPN_NAME-route53}", "${VPN_NAME-backup}"]
 end
 
 coreo_aws_ec2_instance "${VPN_NAME}" do
