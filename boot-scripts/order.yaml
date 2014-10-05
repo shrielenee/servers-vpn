@@ -6,3 +6,4 @@
 
 script-order:
   - 01_install_openvpn.sh
+  - 02_setup_backups.sh
