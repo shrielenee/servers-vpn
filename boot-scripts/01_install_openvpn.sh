@@ -11,8 +11,6 @@ tmp_dir="$(mktemp -d)"
 	    sleep 1
 	fi
     done
-    
-VPC_OCTETS
 
 )
 rm -rf "$tmp_dir"
