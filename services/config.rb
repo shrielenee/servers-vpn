@@ -20,12 +20,12 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
             :direction => :ingress,
             :protocol => :tcp,
             :ports => [1199],
-            :cidrs => ${VPN_ACCESS_CIRDS},
+            :cidrs => ${VPN_ACCESS_CIDRS},
           },{ 
             :direction => :egress,
             :protocol => :tcp,
             :ports => ["0..65535"],
-            :cidrs => ${VPN_ACCESS_CIRDS},
+            :cidrs => ${VPN_ACCESS_CIDRS},
           }
     ]
 end
