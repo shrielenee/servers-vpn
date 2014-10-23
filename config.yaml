@@ -62,6 +62,16 @@ variables:
     description: the name of the vpn server to launch
     overrides:
     required: true
+  VPN_KEY_BUCKET:
+    default: 
+    description: the name of the bucket in which we should retrieve and/or store vpn keys
+    overrides:
+    required: true
+  VPN_KEY_BUCKET_REGION:
+    default: 
+    description: the region where there vpn key bucket was created
+    overrides:
+    required: true
   VPN_SSH_ACCESS_CIDRS:
     default:
       - 10.0.0.0/8

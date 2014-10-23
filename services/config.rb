@@ -138,6 +138,45 @@ coreo_aws_iam_policy "${VPN_NAME}-backup" do
 EOH
 end
 
+coreo_aws_iam_policy "${VPN_NAME}-vpn-key-files" do
+  action :sustain
+  policy_name "Allow${VPN_NAME}VpnKeyAccess"
+  policy_document <<-EOH
+{
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": [
+          "arn:aws:s3:::${VPN_KEY_BUCKET}/vpn/${VPN_NAME}",
+          "arn:aws:s3:::${VPN_KEY_BUCKET}/vpn/${VPN_NAME}/*",
+      ],
+      "Action": [ 
+          "s3:*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::*",
+      "Action": [
+          "s3:ListAllMyBuckets"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Resource": [
+          "arn:aws:s3:::${VPN_KEY_BUCKET}",
+          "arn:aws:s3:::${VPN_KEY_BUCKET}/*"
+      ],
+      "Action": [
+          "s3:GetBucket*", 
+          "s3:List*" 
+      ]
+    }
+  ]
+}
+EOH
+end
+
 
 coreo_aws_iam_instance_profile "${VPN_NAME}" do
   action :sustain

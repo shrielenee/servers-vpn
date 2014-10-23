@@ -5,11 +5,10 @@
 ##   REQUIRED
 ##     - VPN_KEY_BUCKET
 ##     - VPN_KEY_BUCKET_REGION
+##     - VPN_NAME
 ##   - VPN_PORT
 ##   - VPN_PROTO
-##   - VPN_NAME
 ##   - VPN_CIDR
-##   - VPN_KEY_ZIP_PATH
 ##
 ######################################################################
 
@@ -21,10 +20,10 @@ EASY_RSA="${OPENVPN}/easy-rsa"
 
 if [ ! -d "${EASY_RSA}" ]; then
     mkdir -p "${EASY_RSA}"
-    cp "/usr/share/easy-rsa/2.0/*" "${EASY_RSA}/"
+    cp /usr/share/easy-rsa/2.0/* "${EASY_RSA}/"
 fi
 
-files_dir="$(pwd)/.."
+files_dir="$(pwd)/../files"
 
 if [ -z "${VPN_PORT:-}" ]; then
     VPN_PORT=1199
@@ -35,17 +34,14 @@ fi
 if [ -z "${VPN_PROTO:-}" ]; then
     VPN_PROTO="tcp"
 fi
-if [ -z "${VPN_NAME}" ]; then
+if [ -z "${VPN_NAME:-}" ]; then
     VPN_NAME="vpnserver"
 fi
 ## make sure there are no - or _ in the name
-VPN_NAME="$(echo ${VPN_NAME} perl -pe 's{[-_]}{}g')"
+VPN_NAME="$(echo ${VPN_NAME} | perl -pe 's{[-_]}{}g')"
+VPN_KEY_ZIP_PATH="vpn/${VPN_NAME}/${VPN_NAME}.zip"
 
-if [ -z "${VPN_KEY_ZIP_PATH}" ]; then
-    VPN_KEY_ZIP_PATH="vpn/${VPN_NAME}/${VPN_NAME}.zip"
-fi
-
-cp "$files_dir/files/template-server-config" "$OPENVPN/openvpn.conf"
+cp "$files_dir/template-server-config" "$OPENVPN/openvpn.conf"
 sed -i -e "s/VPN_PROTO/$VPN_PROTO/" -e "s/VPN_PORT/$VPN_PORT/" -e "s/VPN_CIDR/$VPN_CIDR/" $OPENVPN/openvpn.conf
 
 if grep -q "cat <<EOL >> /etc/ssh/sshd_config" /etc/rc.d/rc.local
