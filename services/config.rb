@@ -148,7 +148,7 @@ coreo_aws_iam_policy "${VPN_NAME}-vpn-key-files" do
       "Effect": "Allow",
       "Resource": [
           "arn:aws:s3:::${VPN_KEY_BUCKET}/vpn/${VPN_NAME}",
-          "arn:aws:s3:::${VPN_KEY_BUCKET}/vpn/${VPN_NAME}/*",
+          "arn:aws:s3:::${VPN_KEY_BUCKET}/vpn/${VPN_NAME}/*"
       ],
       "Action": [ 
           "s3:*"
