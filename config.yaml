@@ -26,7 +26,7 @@ variables:
     overrides:
     required: true
     type:
-  VPN_ACCESS_CIRDS:
+  VPN_ACCESS_CIDRS:
     default:
       - 0.0.0.0/0
     description:
