@@ -180,7 +180,7 @@ end
 
 coreo_aws_iam_instance_profile "${VPN_NAME}" do
   action :sustain
-  policies ["${VPN_NAME}-route53", "${VPN_NAME}-backup"]
+  policies ["${VPN_NAME}-route53", "${VPN_NAME}-backup", "${VPN_NAME}-vpn-key-files"]
 end
 
 coreo_aws_ec2_instance "${VPN_NAME}" do
