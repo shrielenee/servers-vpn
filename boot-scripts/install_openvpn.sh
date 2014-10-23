@@ -1,3 +1,3 @@
 #!/bin/bash
 
-yum --enablerepo=* install -y openvpn
+yum --enablerepo=* install -y openvpn zip
