@@ -134,6 +134,4 @@ if [ "$restart" == 1 ]; then
 EOF
     
 fi
-
 echo "done"
-exit 0
