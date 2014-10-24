@@ -54,18 +54,21 @@ fi
 sed -i '/^exit 0/d' /etc/rc.local
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables -I INPUT -p $VPN_PROTO --dport $VPN_PORT -j ACCEPT
 
-iptables -t nat -A POSTROUTING -s "${VPN_CIDR}/16" -d 0.0.0.0/0 -o eth0 -j MASQUERADE
-#default firewall in centos forbids these
-iptables -I FORWARD -i eth0 -o tun0 -j ACCEPT
-iptables -I FORWARD -i tun0 -o eth0 -j ACCEPT
+if ! echo "$(iptables -t nat -L -n)" | grep MASQUERADE | grep -q "$VPN_CIDR/16"; then
+    iptables -I INPUT -p $VPN_PROTO --dport $VPN_PORT -j ACCEPT
 
-#not sure if these are really necessary, they probably are the default.
-iptables -t nat -P POSTROUTING ACCEPT
-iptables -t nat -P PREROUTING ACCEPT
-iptables -t nat -P OUTPUT ACCEPT
-iptables-save
+    iptables -t nat -A POSTROUTING -s "${VPN_CIDR}/16" -d 0.0.0.0/0 -o eth0 -j MASQUERADE
+    #default firewall in centos forbids these
+    iptables -I FORWARD -i eth0 -o tun0 -j ACCEPT
+    iptables -I FORWARD -i tun0 -o eth0 -j ACCEPT
+
+    #not sure if these are really necessary, they probably are the default.
+    iptables -t nat -P POSTROUTING ACCEPT
+    iptables -t nat -P PREROUTING ACCEPT
+    iptables -t nat -P OUTPUT ACCEPT
+    iptables-save
+fi
 
 ## lets just go get the file so we dont have to keep checking s3
 aws --region ${VPN_KEY_BUCKET_REGION} s3 cp s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH} /tmp/ || true
@@ -93,13 +96,25 @@ else
     )
 fi
 
-if ! grep -q -i '[^#]\s*push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\"' /etc/openvpn/openvpn.conf; then
-    perl -i -pe 's{(^push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\")}{# \\1}g' /etc/openvpn/openvpn.conf
+if ! grep -q -i 'username-as-common-name' /etc/openvpn/openvpn.conf; then
+    cat <<EOF >> /etc/openvpn/openvpn.conf
+
+## User authentication settings. Usernames must be able to authenticate with PAM
+## To use radius or another auth mechanism create /etc/pam.d/openvpn
+## by default it is doing common-auth (a user must have a local accout and password)
+plugin /usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so login
+username-as-common-name
+
+EOF
+fi
+
+if ! grep -q -i '^push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\"' /etc/openvpn/openvpn.conf; then
+    perl -i -pe 's{(push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\")}{# \\1}g' /etc/openvpn/openvpn.conf
     restart=1
 fi
 
-if ! grep -q -i "push\s*\"route ${VPN_CIDR} 255.255.0.0\"" /etc/openvpn/openvpn.conf; then
-    echo "push \"route ${VPN_CIDR} 255.255.0.0\"" >> /etc/openvpn/openvpn.conf
+if ! grep -q -i "push\s*\"route ${VPN_CIDR} 255.0.0.0\"" /etc/openvpn/openvpn.conf; then
+    echo "push \"route ${VPN_CIDR} 255.0.0.0\"" >> /etc/openvpn/openvpn.conf
     restart=1
 fi
 
