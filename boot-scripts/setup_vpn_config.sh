@@ -83,18 +83,19 @@ if [ -f "/tmp/$(basename ${VPN_KEY_ZIP_PATH})" ]; then
 else
     ( 
 	cd $EASY_RSA || { echo "Cannot cd into $EASY_RSA, aborting!"; exit 1; }
-	[ -d keys ] && { echo "$EASY_RSA/keys directory already exists, aborting!"; exit 1; }
-	cp "$files_dir/vars" myvars
-	sed -i -e 's/Fort-Funston/$VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
-	. ./myvars
-	./clean-all
-	./build-dh
-	./pkitool --initca
-	./pkitool --server myserver
-	openvpn --genkey --secret keys/ta.key
-	cd "$EASY_RSA/keys"
-	zip "$VPN_NAME.zip" *
-	aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
+	if [ ! -d keys ]; then
+	    cp "$files_dir/vars" myvars
+	    sed -i -e 's/Fort-Funston/$VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
+	    . ./myvars
+	    ./clean-all
+	    ./build-dh
+	    ./pkitool --initca
+	    ./pkitool --server myserver
+	    openvpn --genkey --secret keys/ta.key
+	    cd "$EASY_RSA/keys"
+	    zip "$VPN_NAME.zip" *
+	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
+	fi
     )
 fi
 
