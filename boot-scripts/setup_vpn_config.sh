@@ -34,11 +34,8 @@ fi
 if [ -z "${VPN_PROTO:-}" ]; then
     VPN_PROTO="tcp"
 fi
-if [ -z "${VPN_NAME:-}" ]; then
-    VPN_NAME="vpnserver"
-fi
-## make sure there are no - or _ in the name
-VPN_NAME="$(echo ${VPN_NAME} | perl -pe 's{[-_]}{}g')"
+## make sure there are no - or _ in the name, but do NOT overwrite the VPN_NAME
+MY_VPN_NAME="$(echo ${VPN_NAME} | perl -pe 's{[-_]}{}g')"
 VPN_KEY_ZIP_PATH="vpn/${VPN_NAME}/${VPN_NAME}.zip"
 
 cp "$files_dir/template-server-config" "$OPENVPN/openvpn.conf"
@@ -85,7 +82,7 @@ else
 	cd $EASY_RSA || { echo "Cannot cd into $EASY_RSA, aborting!"; exit 1; }
 	if [ ! -d keys ]; then
 	    cp "$files_dir/vars" myvars
-	    sed -i -e 's/Fort-Funston/$VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
+	    sed -i -e 's/Fort-Funston/$MY_VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
 	    . ./myvars
 	    ./clean-all
 	    ./build-dh
