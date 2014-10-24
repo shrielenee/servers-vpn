@@ -129,9 +129,10 @@ EOF
 fi
 
 if [ "$restart" == 1 ]; then    
-    cat <<EOF | bash
+    (
+	cat <<EOF | bash
 /etc/init.d/openvpn restart
 EOF
-    
+    ) 
 fi
 echo "done"
