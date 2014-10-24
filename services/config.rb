@@ -177,7 +177,6 @@ coreo_aws_iam_policy "${VPN_NAME}-vpn-key-files" do
 EOH
 end
 
-
 coreo_aws_iam_instance_profile "${VPN_NAME}" do
   action :sustain
   policies ["${VPN_NAME}-route53", "${VPN_NAME}-backup", "${VPN_NAME}-vpn-key-files"]
@@ -185,11 +184,9 @@ end
 
 coreo_aws_ec2_instance "${VPN_NAME}" do
   action :define
-  #image_id "${VPN_AMI_ID}"
-  image_id "ami-802095e8"
+  image_id "${VPN_AMI_ID}"
   size "${VPN_INSTANCE_TYPE}"
   security_groups ["${VPN_NAME}-sg"]
-  #ssh_key "${VPN_SSH_KEY_NAME}"
   ssh_key "${VPN_SSH_KEY_NAME}"
   role "${VPN_NAME}"
   #disable_cc_client ${VPN_DISABLE_CC_CLIENT}
