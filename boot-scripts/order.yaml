@@ -5,5 +5,4 @@
 ##   - delete_backups.sh
 
 script-order:
-  - install_openvpn.sh
   - setup_backups.sh
