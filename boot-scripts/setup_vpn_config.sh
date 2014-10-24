@@ -79,6 +79,7 @@ if [ -f "/tmp/$(basename ${VPN_KEY_ZIP_PATH})" ]; then
     ## just extract the zipped keys to the correct path
     mkdir -p "$EASY_RSA/keys/"
     unzip -d "$EASY_RSA/keys/" "/tmp/$(basename ${VPN_KEY_ZIP_PATH})"
+    rm -f "/tmp/$(basename ${VPN_KEY_ZIP_PATH})"
 else
     ( 
 	cd $EASY_RSA || { echo "Cannot cd into $EASY_RSA, aborting!"; exit 1; }
@@ -90,6 +91,7 @@ else
 	./build-dh
 	./pkitool --initca
 	./pkitool --server myserver
+	openvpn --genkey --secret keys/ta.key
 	cd "$EASY_RSA/keys"
 	zip "$VPN_NAME.zip" *
 	aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
@@ -108,13 +110,23 @@ username-as-common-name
 EOF
 fi
 
-if ! grep -q -i '^push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\"' /etc/openvpn/openvpn.conf; then
-    perl -i -pe 's{(push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\")}{# \\1}g' /etc/openvpn/openvpn.conf
+if grep -q -i '^push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\"' /etc/openvpn/openvpn.conf; then
+    perl -i -pe 's{(push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\")}{# \1}g' /etc/openvpn/openvpn.conf
     restart=1
 fi
 
 if ! grep -q -i "push\s*\"route ${VPN_CIDR} 255.0.0.0\"" /etc/openvpn/openvpn.conf; then
     echo "push \"route ${VPN_CIDR} 255.0.0.0\"" >> /etc/openvpn/openvpn.conf
+    restart=1
+fi
+
+if ! grep -q "^user " /etc/openvpn/openvpn.conf; then
+    cat <<EOF >> /etc/openvpn/openvpn.conf
+
+user nobody
+group nobody
+
+EOF
     restart=1
 fi
 
