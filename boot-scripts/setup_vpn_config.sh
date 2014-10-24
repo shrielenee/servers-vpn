@@ -128,6 +128,12 @@ EOF
     restart=1
 fi
 
-if [ "$restart" == 1 ]; then
-    /etc/init.d/openvpn restart
+if [ "$restart" == 1 ]; then    
+    cat <<EOF | bash
+/etc/init.d/openvpn restart
+EOF
+    
 fi
+
+echo "done"
+exit 0
