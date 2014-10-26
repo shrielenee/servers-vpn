@@ -89,6 +89,12 @@ else
 	    ./pkitool --server myserver
 	    openvpn --genkey --secret keys/ta.key
 	    openssl dhparam -out keys/dh1024.pem 1024
+	    ## create an admin user and password
+	    adduser vpnadmin
+	    PASSWORD="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c8)"
+	    echo "vpnadmin:$PASSWORD" | chpasswd
+	    echo "username:vpnadmin" > "$EASY_RSA/keys/VPNADMIN_PASSWORD"
+	    echo "password:$PASSWORD" >> "$EASY_RSA/keys/VPNADMIN_PASSWORD"
 	    cd "$EASY_RSA/keys"
 	    zip "$VPN_NAME.zip" *
 	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
