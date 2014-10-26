@@ -14,7 +14,6 @@
 
 set -eux
 
-restart=0
 OPENVPN="/etc/openvpn"
 EASY_RSA="${OPENVPN}/easy-rsa"
 
@@ -89,6 +88,7 @@ else
 	    ./pkitool --initca
 	    ./pkitool --server myserver
 	    openvpn --genkey --secret keys/ta.key
+	    openssl dhparam -out keys/dh1024.pem 1024
 	    cd "$EASY_RSA/keys"
 	    zip "$VPN_NAME.zip" *
 	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
@@ -110,12 +110,10 @@ fi
 
 if grep -q -i '^push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\"' /etc/openvpn/openvpn.conf; then
     perl -i -pe 's{(push\s*\"redirect-gateway\s*def1\s*bypass-dhcp\")}{# \1}g' /etc/openvpn/openvpn.conf
-    restart=1
 fi
 
 if ! grep -q -i "push\s*\"route ${VPN_CIDR} 255.0.0.0\"" /etc/openvpn/openvpn.conf; then
     echo "push \"route ${VPN_CIDR} 255.0.0.0\"" >> /etc/openvpn/openvpn.conf
-    restart=1
 fi
 
 if ! grep -q "^user " /etc/openvpn/openvpn.conf; then
@@ -125,17 +123,6 @@ user nobody
 group nobody
 
 EOF
-    restart=1
 fi
 
-if [ "$restart" == 1 ]; then    
-    (
-	cat <<EOF | bash
-#!/bin/bash
-set -x
-/etc/init.d/openvpn restart
-exit 0
-EOF
-    ) 
-fi
 echo "done"
