@@ -26,6 +26,12 @@ variables:
     overrides:
     required: true
     type:
+  VPC_CIDR:
+    default: 10.1.0.0
+    description:
+    overrides:
+    required: true
+    type:
   VPN_ACCESS_CIDRS:
     default:
       - 0.0.0.0/0
