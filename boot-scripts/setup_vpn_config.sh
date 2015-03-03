@@ -80,15 +80,25 @@ else
     ( 
 	cd $EASY_RSA || { echo "Cannot cd into $EASY_RSA, aborting!"; exit 1; }
 	if [ ! -d keys ]; then
+	    ## put the git version of the vars file in our working directory
 	    cp "$files_dir/vars" myvars
 	    sed -i -e 's/Fort-Funston/$MY_VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
-	    . ./myvars
+	    . myvars
 	    ./clean-all
+	    ## generate a diffie hellman
 	    ./build-dh
-	    ./pkitool --initca
-	    ./pkitool --server myserver
+
+	    ## build our certificate authority
+	    ./pkitool --initca "$MY_VPN_NAME"
+
+	    ## build the server key and name it "$MY_VPN_NAME"
+	    ./pkitool --server "$MY_VPN_NAME"
+
+	    ## generate a client cert
+	    ./pkitool "${MY_VPN_NAME}-client"
+
 	    openvpn --genkey --secret keys/ta.key
-	    openssl dhparam -out keys/dh1024.pem 1024
+
 	    ## create an admin user and password
 	    adduser vpnadmin
 	    PASSWORD="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c8)"
