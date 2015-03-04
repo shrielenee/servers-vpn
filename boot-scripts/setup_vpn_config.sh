@@ -6,6 +6,7 @@
 ##     - VPN_KEY_BUCKET
 ##     - VPN_KEY_BUCKET_REGION
 ##     - VPN_NAME
+##     - DNS_ZONE
 ##   - VPN_PORT
 ##   - VPN_PROTO
 ##   - VPN_CIDR
@@ -82,6 +83,10 @@ else
 	if [ ! -d keys ]; then
 	    ## put the git version of the vars file in our working directory
 	    cp "$files_dir/vars" myvars
+	    cp "$files_dir/client.conf" client.conf
+	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" client.conf
+	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" client.conf
+
 	    sed -i -e 's/Fort-Funston/$MY_VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
 	    . myvars
 	    ./clean-all
