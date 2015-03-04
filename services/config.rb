@@ -46,6 +46,9 @@ coreo_aws_ec2_elb "${VPN_NAME}-elb" do
             ]
   health_check_protocol 'tcp'
   health_check_port "1199"
+  health_check_timeout 120
+  health_check_unhealthy_threshold 5
+  health_check_healthy_threshold 2
 end
 
 coreo_aws_route53_record "${VPN_NAME}" do
