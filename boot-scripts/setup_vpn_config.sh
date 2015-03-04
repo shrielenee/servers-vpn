@@ -83,10 +83,6 @@ else
 	if [ ! -d keys ]; then
 	    ## put the git version of the vars file in our working directory
 	    cp "$files_dir/vars" myvars
-	    cp "$files_dir/client.conf" client.conf
-	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" client.conf
-	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" client.conf
-
 	    sed -i -e 's/Fort-Funston/$MY_VPN_NAME/' -e 's/SanFrancisco/Simple OpenVPN server/' myvars
 	    . myvars
 	    ./clean-all
@@ -110,6 +106,12 @@ else
 	    echo "vpnadmin:$PASSWORD" | chpasswd
 	    echo "username:vpnadmin" > "$EASY_RSA/keys/VPNADMIN_PASSWORD"
 	    echo "password:$PASSWORD" >> "$EASY_RSA/keys/VPNADMIN_PASSWORD"
+
+	    ## set up the client conf file
+	    cp "$files_dir/client.conf" keys/client.conf
+	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" keys/client.conf
+	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" keys/client.conf
+
 	    cd "$EASY_RSA/keys"
 	    zip "$VPN_NAME.zip" *
 	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
