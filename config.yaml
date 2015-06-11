@@ -58,7 +58,7 @@ variables:
     required: true
     type:
   VPN_INSTANCE_TYPE:
-    default: t1.micro
+    default: t2.micro
     description:
     overrides:
     required: true
