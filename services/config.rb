@@ -10,6 +10,33 @@
 ##   internet_gateway true
 ## end
 ##
+coreo_aws_s3_policy "${BACKUP_BUCKET}-policy" do
+  action :sustain
+  policy_document <<-EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::${BACKUP_BUCKET}/*",
+        "arn:aws:s3:::${BACKUP_BUCKET}"
+      ]
+    }
+  ]
+}
+EOF
+end
+
+coreo_aws_s3_bucket "${BACKUP_BUCKET}" do
+   action :sustain
+   bucket_policies ["${BACKUP_BUCKET}-policy"]
+end
 
 coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
