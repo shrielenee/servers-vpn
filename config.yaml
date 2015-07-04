@@ -76,6 +76,16 @@ variables:
     description: the name of the vpn server to launch
     overrides:
     required: true
+  BACKUP_BUCKET:
+    default: 
+    description: the name of the bucket in which we should back things up
+    overrides:
+    required: true
+  BACKUP_BUCKET_REGION:
+    default: 
+    description: the region where there vpn backups bucket was created
+    overrides:
+    required: true
   VPN_KEY_BUCKET:
     default: 
     description: the name of the bucket in which we should retrieve and/or store vpn keys

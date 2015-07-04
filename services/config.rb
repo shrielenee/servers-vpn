@@ -36,6 +36,36 @@ end
 coreo_aws_s3_bucket "${BACKUP_BUCKET}" do
    action :sustain
    bucket_policies ["${BACKUP_BUCKET}-policy"]
+   region "${BACKUP_BUCKET_REGION}"
+end
+
+coreo_aws_s3_policy "${VPN_KEY_BUCKET}-policy" do
+  action :sustain
+  policy_document <<-EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::${VPN_KEY_BUCKET}/*",
+        "arn:aws:s3:::${VPN_KEY_BUCKET}"
+      ]
+    }
+  ]
+}
+EOF
+end
+
+coreo_aws_s3_bucket "${VPN_KEY_BUCKET}" do
+   action :sustain
+   bucket_policies ["${VPN_KEY_BUCKET}-policy"]
+   region "${VPN_KEY_BUCKET_REGION}"
 end
 
 coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
