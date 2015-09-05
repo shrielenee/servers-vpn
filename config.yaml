@@ -39,6 +39,12 @@ variables:
     overrides:
     required: true
     type: array
+  REGION:
+    default: INSTANCE::region
+    description: the region we are launching in
+    overrides:
+    required: true
+    type: string
   VPN_AMI_ID:
     description: the ami id of the vpn
     switch: INSTANCE::region
