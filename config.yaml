@@ -26,6 +26,12 @@ variables:
     overrides:
     required: true
     type:
+  ENV:
+    default: test
+    description:
+    overrides:
+    required: true
+    type:
   VPC_OCTETS:
     default: 10.1.0.0
     description:
