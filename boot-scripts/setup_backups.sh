@@ -18,6 +18,7 @@ fi
 
 MY_AZ="$(curl -sL 169.254.169.254/latest/meta-data/placement/availability-zone)"
 MY_REGION="$(echo ${MY_AZ%?})"
+backup_cron="${VPN_BACKUP_CRON:-0 * * * *}"
 
 ## lets set up pre and post restore scripts
 script_dir="/var/tmp/cloudcoreo-directory-backup-scripts"
