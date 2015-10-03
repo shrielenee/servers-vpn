@@ -26,6 +26,12 @@ variables:
     overrides:
     required: true
     type:
+  VPN_BACKUP_CRON:
+    default: 0 * * * *
+    description: the cron schedule for backups
+    overrides:
+    required: true
+    type: string
   ENV:
     default: test
     description:
