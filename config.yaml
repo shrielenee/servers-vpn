@@ -9,19 +9,23 @@
 
 variables:
   PRIVATE_SUBNET_NAME:
-    default:
+    default: my-private-subnet
     description:
     overrides:
     required: true
     type:
+  PRIVATE_ROUTE_NAME:
+    required: true
+    description: the name to give to the private route
+    default: my-private-route
   PUBLIC_SUBNET_NAME:
-    default:
+    default: my-public-subnet
     description:
     overrides:
     required: true
     type:
   VPC_NAME:
-    default:
+    default: my-vpc
     description:
     overrides:
     required: true
@@ -78,7 +82,7 @@ variables:
     required: true
     type: boolean
   VPN_DNS_PREFIX:
-    default: 
+    default: vpn
     description: the dns entry to create for the VPN server (<prefix>.<zone>)
     overrides:
     required: true
@@ -128,7 +132,7 @@ variables:
     required: true
     type:
   DNS_ZONE:
-    default:
+    default: 
     description: the dns entry for the zone (i.e. example.com)
     overrides:
     required: true
