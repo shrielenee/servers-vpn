@@ -43,7 +43,7 @@ variables:
     required: true
     type:
   VPC_OCTETS:
-    default: 10.1.0.0
+    default: 10.0.0.0
     description:
     overrides:
     required: true
