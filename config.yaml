@@ -127,7 +127,7 @@ variables:
     overrides:
     required: true
     type:
-  ZONE:
+  DNS_ZONE:
     default:
     description: the dns entry for the zone (i.e. example.com)
     overrides:
