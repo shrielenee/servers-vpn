@@ -266,7 +266,6 @@ coreo_aws_ec2_instance "${VPN_NAME}" do
   security_groups ["${VPN_NAME}-sg"]
   ssh_key "${VPN_SSH_KEY_NAME}"
   role "${VPN_NAME}"
-  #disable_cc_client ${VPN_DISABLE_CC_CLIENT}
 end
 
 coreo_aws_ec2_autoscaling "${VPN_NAME}" do

@@ -75,12 +75,6 @@ variables:
         ap-southeast-2: ami-fd9cecc7
         sa-east-1: ami-b52890a8
     type: case
-  VPN_DISABLE_CC_CLIENT:
-    default: false
-    description: should the cloudcoreo client be disbaled on the vpn server
-    overrides:
-    required: true
-    type: boolean
   VPN_DNS_PREFIX:
     default: vpn
     description: the dns entry to create for the VPN server (<prefix>.<zone>)
