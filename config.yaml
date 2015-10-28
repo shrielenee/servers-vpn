@@ -18,6 +18,10 @@ variables:
     required: true
     description: the name to give to the private route
     default: my-private-route
+  PUBLIC_ROUTE_NAME:
+    required: true
+    description: the name to give to the public route
+    default: my-public-route
   PUBLIC_SUBNET_NAME:
     default: my-public-subnet
     description:
