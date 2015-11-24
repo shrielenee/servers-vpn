@@ -59,6 +59,12 @@ variables:
     overrides:
     required: true
     type: array
+  VPN_ROUTING_CIDR:
+    default: 10.0.0.0
+    description: This is the cidr of the network cidr the VPN should "own" on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0.0.0.0 for all traffic. This works in conjunction with the VPN_ROUTING_MASK variable.
+  VPN_ROUTING_MASK:
+    default: 8
+    description: This is the cidr mask of the network cidr the VPN should "own" on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0 for all traffic. This works in conjunction with the VPN_ROUTING_CIDR variable.
   REGION:
     default: INSTANCE::region
     description: the region we are launching in

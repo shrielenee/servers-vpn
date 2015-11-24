@@ -7,6 +7,7 @@
 ##     - VPN_KEY_BUCKET_REGION
 ##     - VPN_NAME
 ##     - DNS_ZONE
+##     - VPC_OCTETS | VPN_ROUTING_CIDR
 ##   - VPN_PORT
 ##   - VPN_PROTO
 ##   - VPN_CIDR
@@ -14,6 +15,25 @@
 ######################################################################
 
 set -eux
+
+cidr2mask() {
+  local i mask=""
+  local full_octets=$(($1/8))
+  local partial_octet=$(($1%8))
+
+  for ((i=0;i<4;i+=1)); do
+    if [ $i -lt $full_octets ]; then
+      mask+=255
+    elif [ $i -eq $full_octets ]; then
+      mask+=$((256 - 2**(8-$partial_octet)))
+    else
+      mask+=0
+    fi  
+    test $i -lt 3 && mask+=.
+  done
+
+  echo $mask
+}
 
 OPENVPN="/etc/openvpn"
 EASY_RSA="${OPENVPN}/easy-rsa"
@@ -24,13 +44,34 @@ if [ ! -d "${EASY_RSA}" ]; then
 fi
 
 files_dir="$(pwd)/../files"
-
 if [ -z "${VPN_PORT:-}" ]; then
     VPN_PORT=1199
 fi
+
+## these two are for routing traffic
+## if we dont specify the routing cidr, use the vpc octets
+if [ -z "${VPN_ROUTING_CIDR:-}" ]; then
+    if [ -z "${VPC_OCTETS}" ]; then
+	## if we dont specify the vpc octets either, just use 10.0.0.0
+	VPN_ROUTING_CIDR="10.0.0.0"
+    else
+	VPN_ROUTING_CIDR="${VPC_OCTETS}"
+    fi
+fi
+
+if [ -z "${VPN_ROUTING_MASK:-}" ]; then
+    VPN_ROUTING_MASK="${VPN_CIDR_MASK}"
+fi
+vpn_routing_mask="$(cidr2mask $VPN_ROUTING_MASK)"
+
+## these two are for setting client ip addresses
 if [ -z "${VPN_CIDR:-}" ]; then
     VPN_CIDR="10.8.0.0"
 fi
+if [ -z "${VPN_CIDR_MASK:-}" ]; then
+    VPN_CIDR_MASK="16"
+fi
+
 if [ -z "${VPN_PROTO:-}" ]; then
     VPN_PROTO="tcp"
 fi
@@ -52,10 +93,10 @@ sed -i '/^exit 0/d' /etc/rc.local
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
-if ! echo "$(iptables -t nat -L -n)" | grep MASQUERADE | grep -q "$VPN_CIDR/16"; then
+if ! echo "$(iptables -t nat -L -n)" | grep MASQUERADE | grep -q "$VPN_CIDR/${VPN_CIDR_MASK}"; then
     iptables -I INPUT -p $VPN_PROTO --dport $VPN_PORT -j ACCEPT
 
-    iptables -t nat -A POSTROUTING -s "${VPN_CIDR}/16" -d 0.0.0.0/0 -o eth0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -s "${VPN_CIDR}/${VPN_CIDR_MASK}" -d 0.0.0.0/0 -o eth0 -j MASQUERADE
     #default firewall in centos forbids these
     iptables -I FORWARD -i eth0 -o tun0 -j ACCEPT
     iptables -I FORWARD -i tun0 -o eth0 -j ACCEPT
@@ -139,8 +180,8 @@ if grep -q -i 'myserver' /etc/openvpn/openvpn.conf; then
     perl -i -pe "s{myserver}{$MY_VPN_NAME}g" /etc/openvpn/openvpn.conf
 fi
 
-if ! grep -q -i "push\s*\"route ${VPC_OCTETS} 255.255.0.0\"" /etc/openvpn/openvpn.conf; then
-    echo "push \"route ${VPC_OCTETS} 255.255.0.0\"" >> /etc/openvpn/openvpn.conf
+if ! grep -q -i "push\s*\"route ${VPN_ROUTING_CIDR} ${vpn_routing_mask}\"" /etc/openvpn/openvpn.conf; then
+    echo "push \"route ${VPN_ROUTING_CIDR} ${vpn_routing_mask}\"" >> /etc/openvpn/openvpn.conf
 fi
 
 if ! grep -q "^user " /etc/openvpn/openvpn.conf; then
