@@ -17,24 +17,24 @@ end
 
 coreo_aws_vpc_routetable "${PRIVATE_ROUTE_NAME}-vpn" do
   action :find
-  vpc "${VPC_NAME}"
+  vpc "${VPC_NAME}-vpn"
 end
 
 coreo_aws_vpc_subnet "${PRIVATE_SUBNET_NAME}-vpn" do
   action :find
-  route_table "${PRIVATE_ROUTE_NAME}"
-  vpc "${VPC_NAME}"
+  route_table "${PRIVATE_ROUTE_NAME}-vpn"
+  vpc "${VPC_NAME}-vpn"
 end
 
 coreo_aws_vpc_routetable "${PUBLIC_ROUTE_NAME}-vpn" do
   action :find
-  vpc "${VPC_NAME}"
+  vpc "${VPC_NAME}-vpn"
 end
 
 coreo_aws_vpc_subnet "${PUBLIC_SUBNET_NAME}-vpn" do
   action :find
-  route_table "${PUBLIC_ROUTE_NAME}"
-  vpc "${VPC_NAME}"
+  route_table "${PUBLIC_ROUTE_NAME}-vpn"
+  vpc "${VPC_NAME}-vpn"
 end
 
 coreo_aws_s3_policy "${BACKUP_BUCKET}-policy" do
@@ -98,7 +98,7 @@ end
 coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
   description "Open vpn to the world"
-  vpc "${VPC_NAME}"
+  vpc "${VPC_NAME}-vpn"
   allows [ 
           { 
             :direction => :ingress,
@@ -117,8 +117,8 @@ end
 coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   action :sustain
   type "public"
-  vpc "${VPC_NAME}"
-  subnet "${PUBLIC_SUBNET_NAME}"
+  vpc "${VPC_NAME}-vpn"
+  subnet "${PUBLIC_SUBNET_NAME}-vpn"
   security_groups ["${VPN_NAME}-elb-sg"]
   listeners [
              {
@@ -146,7 +146,7 @@ end
 coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
   action :sustain
   description "Open vpn connections to the world"
-  vpc "${VPC_NAME}"
+  vpc "${VPC_NAME}-vpn"
   allows [ 
           { 
             :direction => :ingress,
