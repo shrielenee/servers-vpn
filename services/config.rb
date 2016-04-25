@@ -98,7 +98,7 @@ end
 coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
   description "Open vpn to the world"
-  vpc "${VPC_NAME}-vpn"
+  vpc "${VPC_NAME}"
   allows [ 
           { 
             :direction => :ingress,
@@ -117,8 +117,8 @@ end
 coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   action :sustain
   type "public"
-  vpc "${VPC_NAME}-vpn"
-  subnet "${PUBLIC_SUBNET_NAME}-vpn"
+  vpc "${VPC_NAME}"
+  subnet "${PUBLIC_SUBNET_NAME}"
   security_groups ["${VPN_NAME}-elb-sg"]
   listeners [
              {
@@ -146,7 +146,7 @@ end
 coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
   action :sustain
   description "Open vpn connections to the world"
-  vpc "${VPC_NAME}-vpn"
+  vpc "${VPC_NAME}"
   allows [ 
           { 
             :direction => :ingress,
