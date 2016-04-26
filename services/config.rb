@@ -28,7 +28,7 @@ end
 
 coreo_aws_vpc_subnet "${PRIVATE_SUBNET_NAME}-vpn" do
   action :find
-  route_table "${PRIVATE_ROUTE_NAME}-vpn"
+  route_table "${PRIVATE_ROUTE_NAME}"
   vpc "${VPC_NAME}-vpn"
   tags [
         "Name=${PRIVATE_SUBNET_NAME}"
