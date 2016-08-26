@@ -10,41 +10,6 @@
 ##   internet_gateway true
 ## end
 ##
-coreo_aws_vpc_vpc "${VPC_NAME}" do
-  action :find
-  cidr "${VPC_OCTETS}/16"
-  tags [
-        "Name=${VPC_NAME}"
-       ]
-end
-
-coreo_aws_vpc_routetable "${PRIVATE_ROUTE_NAME}" do
-  action :find
-  vpc "${VPC_NAME}"
-  tags [
-        "Name=${PRIVATE_ROUTE_NAME}"
-       ]
-end
-
-coreo_aws_vpc_subnet "${PRIVATE_SUBNET_NAME}" do
-  action :find
-  route_table "${PRIVATE_ROUTE_NAME}"
-  vpc "${VPC_NAME}"
-end
-
-coreo_aws_vpc_routetable "${PUBLIC_ROUTE_NAME}" do
-  action :find
-  vpc "${VPC_NAME}"
-  tags [
-        "Name=${PUBLIC_ROUTE_NAME}"
-       ]
-end
-
-coreo_aws_vpc_subnet "${PUBLIC_SUBNET_NAME}" do
-  action :find
-  route_table "${PUBLIC_ROUTE_NAME}"
-  vpc "${VPC_NAME}"
-end
 
 coreo_aws_s3_policy "${BACKUP_BUCKET}-policy" do
   action :sustain
