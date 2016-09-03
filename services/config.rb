@@ -88,7 +88,7 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
     ]
 end
 
-coreo_aws_ec2_elb "${VPN_NAME}-elb" do
+coreo_aws_ec2_elb "${VPN_DNS_PREFIX}-elb" do
   action :sustain
   type "public"
   vpc "${VPC_NAME}"
@@ -110,11 +110,11 @@ coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   health_check_healthy_threshold 2
 end
 
-coreo_aws_route53_record "${VPN_NAME}" do
+coreo_aws_route53_record "${VPN_DNS_PREFIX}" do
   action :sustain
   type "CNAME"
   zone "${DNS_ZONE}"
-  values ["STACK::coreo_aws_ec2_elb.${VPN_NAME}-elb.dns_name"]
+  values ["STACK::coreo_aws_ec2_elb.${VPN_DNS_PREFIX}-elb.dns_name"]
 end
 
 coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
@@ -260,5 +260,5 @@ coreo_aws_ec2_autoscaling "${VPN_NAME}" do
   maximum 1
   server_definition "${VPN_NAME}"
   subnet "${PRIVATE_SUBNET_NAME}"
-  elbs ["${VPN_NAME}-elb"]
+  elbs ["${VPN_DNS_PREFIX}-elb"]
 end
