@@ -113,6 +113,9 @@ Backups will be performed every hour. The usernames allowed in the system are si
 1. Networking
 1. VPN
 
+## Categories
+
+1. Network
 
 ## Diagram
 
