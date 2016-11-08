@@ -66,14 +66,14 @@ variables:
     default: 8
     description: This is the cidr mask of the network cidr the VPN should on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0 for all traffic. This works in conjunction with the VPN_ROUTING_CIDR variable.
   REGION:
-    default: INSTANCE::region
+    default: PLAN::region
     description: the region we are launching in
     overrides:
     required: true
     type: string
   VPN_AMI_ID:
     description: the ami id for the VPN server
-    switch: "INSTANCE::region"
+    switch: "PLAN::region"
     cases:
         us-east-1: ami-b73b63a0
         us-east-2: ami-58277d3d
