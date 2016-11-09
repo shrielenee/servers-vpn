@@ -125,7 +125,7 @@ Backups will be performed every hour. The usernames allowed in the system are si
 ## Optional variables with default
 
 ### `VPN_AMI_ID`:
-  * description: the ami id of the vpn
+  * description: the ami id for the VPN server
 
 ## Tags
 1. Self-Healing
