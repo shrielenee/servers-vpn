@@ -89,7 +89,7 @@ Backups will be performed every hour. The usernames allowed in the system are si
 
 ### `REGION`:
   * description: the region we are launching in
-  * default: INSTANCE::region
+  * default: PLAN::region
 
 ### `VPN_DNS_PREFIX`:
   * description: the dns entry to create for the VPN server (<prefix>.<zone>)
