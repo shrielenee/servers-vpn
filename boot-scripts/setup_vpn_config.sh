@@ -149,9 +149,9 @@ else
 	    echo "password:$PASSWORD" >> "$EASY_RSA/keys/VPNADMIN_PASSWORD"
 
 	    ## set up the client conf file
-	    cp "$files_dir/client.conf" keys/client.conf
-	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" keys/client.conf
-	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" keys/client.conf
+	    cp "$files_dir/client.conf" "keys/${VPN_NAME}-client.conf"
+	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" "keys/${VPN_NAME}-client.conf"
+	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" "keys/${VPN_NAME}-client.conf"
 
 	    cd "$EASY_RSA/keys"
 	    zip "$VPN_NAME.zip" *
