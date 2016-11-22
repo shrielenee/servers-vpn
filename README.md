@@ -111,7 +111,7 @@ Backups will be performed every hour. The usernames allowed in the system are si
   * default: 10.0.0.0/8
 
 
-## Optional variables with no default
+## Optional variables with default
 
 ### `VPN_ROUTING_CIDR`:
   * description: This is the cidr of the network cidr the VPN should on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0.0.0.0 for all traffic. This works in conjunction with the VPN_ROUTING_MASK variable.
@@ -122,7 +122,7 @@ Backups will be performed every hour. The usernames allowed in the system are si
   * description: This is the cidr mask of the network cidr the VPN should on your network. i.e. all traffic to this cidr will be routed through the VPN. set to 0 for all traffic. This works in conjunction with the VPN_ROUTING_CIDR variable.
 
 
-## Optional variables with default
+## Optional variables with no default
 
 ### `VPN_AMI_ID`:
   * description: the ami id for the VPN server
