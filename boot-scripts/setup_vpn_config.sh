@@ -206,6 +206,8 @@ if ! grep -q -i "push\s*\"route ${VPN_ROUTING_CIDR} ${vpn_routing_mask}\"" /etc/
     echo "push \"route ${VPN_ROUTING_CIDR} ${vpn_routing_mask}\"" >> /etc/openvpn/openvpn.conf
 fi
 
+perl -i -pe "s{ easy-rsa/}{ ${EASY_RSA}/}g" /etc/openvpn/openvpn.conf
+
 if ! grep -q "^user " /etc/openvpn/openvpn.conf; then
     cat <<EOF >> /etc/openvpn/openvpn.conf
 
