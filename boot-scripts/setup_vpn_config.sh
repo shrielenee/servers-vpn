@@ -171,13 +171,18 @@ else
     )
 fi
 
+pam_file="/etc/openvpn/openvpn-plugin-auth-pam.so"
+if [ -f "/usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so" ]; then
+    pam_file="/usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so"
+fi
+
 if ! grep -q -i 'username-as-common-name' /etc/openvpn/openvpn.conf; then
     cat <<EOF >> /etc/openvpn/openvpn.conf
 
 ## User authentication settings. Usernames must be able to authenticate with PAM
 ## To use radius or another auth mechanism create /etc/pam.d/openvpn
 ## by default it is doing common-auth (a user must have a local accout and password)
-plugin /usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so login
+plugin $pam_file login
 username-as-common-name
 
 EOF
