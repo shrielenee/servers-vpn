@@ -40,7 +40,14 @@ EASY_RSA="${OPENVPN}/easy-rsa"
 
 if [ ! -d "${EASY_RSA}" ]; then
     mkdir -p "${EASY_RSA}"
-    cp /usr/share/easy-rsa/2.0/* "${EASY_RSA}/"
+    if [ -d "/usr/share/easy-rsa/2.0" ]; then
+	cp /usr/share/easy-rsa/2.0/* "${EASY_RSA}/"
+    elif [ -f "/usr/share/easy-rsa/build-dh" ]; then
+	cp /usr/share/easy-rsa/* "${EASY_RSA}/"
+    else
+	echo "unknown easy-rsa dir"
+	exit 1
+    fi
 fi
 
 files_dir="$(pwd)/../files"
@@ -151,11 +158,15 @@ else
 	    ## set up the client conf file
 	    cp "$files_dir/client.conf" "keys/${VPN_NAME}-client.conf"
 	    perl -i -pe "s{myserver}{$MY_VPN_NAME}g" "keys/${VPN_NAME}-client.conf"
-	    perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" "keys/${VPN_NAME}-client.conf"
-
+	    if [ -n "${DNS_ZONE:-}" ]; then
+		perl -i -pe "s{sever.hostname}{$VPN_NAME.$DNS_ZONE}g" "keys/${VPN_NAME}-client.conf"
+	    else
+		my_ip="$(curl -sL checkip.amazonaws.com)"
+		perl -i -pe "s{sever.hostname}{$my_ip}g" "keys/${VPN_NAME}-client.conf"
+	    fi
 	    cd "$EASY_RSA/keys"
 	    zip "$VPN_NAME.zip" *
-	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}"
+	    aws --region ${VPN_KEY_BUCKET_REGION} s3 cp "$VPN_NAME.zip" "s3://${VPN_KEY_BUCKET}/${VPN_KEY_ZIP_PATH}" || true
 	fi
     )
 fi
