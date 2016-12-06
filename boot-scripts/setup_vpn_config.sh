@@ -170,10 +170,16 @@ else
 	fi
     )
 fi
-
-pam_file="/etc/openvpn/openvpn-plugin-auth-pam.so"
-if [ -f "/usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so" ]; then
+pam_file=""
+if [ -f "/etc/openvpn/openvpn-plugin-auth-pam.so" ]; then
+    pam_file="/etc/openvpn/openvpn-plugin-auth-pam.so"
+elif [ -f "/usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so" ]; then
     pam_file="/usr/lib64/openvpn/plugin/lib/openvpn-auth-pam.so"
+elif [ -f "/usr/lib/openvpn/openvpn-plugin-auth-pam.so" ]; then
+    pam_file="/usr/lib/openvpn/openvpn-plugin-auth-pam.so"
+else
+    echo "cannot find openvpn plugin auth-pam"
+    exit 1
 fi
 
 if ! grep -q -i 'username-as-common-name' /etc/openvpn/openvpn.conf; then
