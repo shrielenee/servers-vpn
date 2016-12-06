@@ -208,11 +208,17 @@ fi
 
 perl -i -pe "s{ easy-rsa/}{ ${EASY_RSA}/}g" /etc/openvpn/openvpn.conf
 
+nobody_group="nobody"
+nobody_user="nobody"
+if cut -d: -f1 /etc/group | grep -q "nogroup"; then
+    nobody_group="nogroup"
+fi    
+
 if ! grep -q "^user " /etc/openvpn/openvpn.conf; then
     cat <<EOF >> /etc/openvpn/openvpn.conf
 
-user nobody
-group nobody
+user $nobody_user
+group $nobody_group
 
 EOF
 fi
