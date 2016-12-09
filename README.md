@@ -143,5 +143,5 @@ Backups will be performed every hour. The usernames allowed in the system are si
 
 
 ## Icon
-
+![icon](https://raw.githubusercontent.com/CloudCoreo/servers-vpn/master/images/icon.png "icon")
 
