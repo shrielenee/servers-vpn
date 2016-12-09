@@ -1,0 +1,1 @@
+![icon](https://raw.githubusercontent.com/CloudCoreo/servers-vpn/master/images/icon.png "icon")
