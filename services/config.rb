@@ -170,8 +170,8 @@ coreo_aws_iam_policy "${VPN_NAME}-backup" do
     {
       "Effect": "Allow",
       "Resource": [
-          "arn:aws:s3:::${BACKUP_BUCKET}/${::region}/vpn/${ENV}/${VPN_NAME}",
-          "arn:aws:s3:::${BACKUP_BUCKET}/${::region}/vpn/${ENV}/${VPN_NAME}/*"
+          "arn:aws:s3:::${BACKUP_BUCKET}/${region}/vpn/${ENV}/${VPN_NAME}",
+          "arn:aws:s3:::${BACKUP_BUCKET}/${region}/vpn/${ENV}/${VPN_NAME}/*"
       ],
       "Action": [ 
           "s3:*"
