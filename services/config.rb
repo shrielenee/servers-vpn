@@ -31,13 +31,13 @@ coreo_aws_s3_policy "${BACKUP_BUCKET}-policy" do
     }
   ]
 }
-EOF
+  EOF
 end
 
 coreo_aws_s3_bucket "${BACKUP_BUCKET}" do
-   action :sustain
-   bucket_policies ["${BACKUP_BUCKET}-policy"]
-   region "${BACKUP_BUCKET_REGION}"
+  action :sustain
+  bucket_policies ["${BACKUP_BUCKET}-policy"]
+  region "${BACKUP_BUCKET_REGION}"
 end
 
 coreo_aws_s3_policy "${VPN_KEY_BUCKET}-policy" do
@@ -60,32 +60,32 @@ coreo_aws_s3_policy "${VPN_KEY_BUCKET}-policy" do
     }
   ]
 }
-EOF
+  EOF
 end
 
 coreo_aws_s3_bucket "${VPN_KEY_BUCKET}" do
-   action :sustain
-   bucket_policies ["${VPN_KEY_BUCKET}-policy"]
-   region "${VPN_KEY_BUCKET_REGION}"
+  action :sustain
+  bucket_policies ["${VPN_KEY_BUCKET}-policy"]
+  region "${VPN_KEY_BUCKET_REGION}"
 end
 
 coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
   description "Open vpn to the world"
   vpc "${VPC_NAME}"
-  allows [ 
-          { 
-            :direction => :ingress,
-            :protocol => :tcp,
-            :ports => [1199],
-            :cidrs => ${VPN_ACCESS_CIDRS},
-          },{ 
-            :direction => :egress,
-            :protocol => :tcp,
-            :ports => ["0..65535"],
-            :cidrs => ${VPN_ACCESS_CIDRS},
-          }
-    ]
+  allows [
+             {
+                 :direction => :ingress,
+                 :protocol => :tcp,
+                 :ports => [1199],
+                 :cidrs => $ {VPN_ACCESS_CIDRS},
+  }, {
+      :direction => :egress,
+      :protocol => :tcp,
+      :ports => ["0..65535"],
+      :cidrs => $ {VPN_ACCESS_CIDRS},
+  }
+  ]
 end
 
 coreo_aws_ec2_elb "${VPN_NAME}-elb" do
@@ -95,12 +95,12 @@ coreo_aws_ec2_elb "${VPN_NAME}-elb" do
   subnet "${PUBLIC_SUBNET_NAME}"
   security_groups ["${VPN_NAME}-elb-sg"]
   listeners [
-             {
-               :elb_protocol => 'tcp', 
-               :elb_port => 1199, 
-               :to_protocol => 'tcp', 
-               :to_port => 1199
-             }
+                {
+                    :elb_protocol => 'tcp',
+                    :elb_port => 1199,
+                    :to_protocol => 'tcp',
+                    :to_port => 1199
+                }
             ]
   health_check_protocol 'tcp'
   health_check_port "1199"
@@ -121,24 +121,24 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
   action :sustain
   description "Open vpn connections to the world"
   vpc "${VPC_NAME}"
-  allows [ 
-          { 
-            :direction => :ingress,
-            :protocol => :tcp,
-            :ports => [1199],
-            :groups => ["${VPN_NAME}-elb-sg"],
-          },{ 
-            :direction => :ingress,
-            :protocol => :tcp,
-            :ports => [22],
-            :cidrs => ${VPN_SSH_ACCESS_CIDRS},
-          },{ 
-            :direction => :egress,
-            :protocol => :tcp,
-            :ports => ["0..65535"],
-            :cidrs => ["0.0.0.0/0"],
-          }
-    ]
+  allows [
+             {
+                 :direction => :ingress,
+                 :protocol => :tcp,
+                 :ports => [1199],
+                 :groups => ["${VPN_NAME}-elb-sg"],
+             }, {
+                 :direction => :ingress,
+                 :protocol => :tcp,
+                 :ports => [22],
+                 :cidrs => $ {VPN_SSH_ACCESS_CIDRS},
+  }, {
+      :direction => :egress,
+      :protocol => :tcp,
+      :ports => ["0..65535"],
+      :cidrs => ["0.0.0.0/0"],
+  }
+  ]
 end
 
 coreo_aws_iam_policy "${VPN_NAME}-route53" do
@@ -158,7 +158,7 @@ coreo_aws_iam_policy "${VPN_NAME}-route53" do
     }
   ]
 }
-EOH
+  EOH
 end
 
 coreo_aws_iam_policy "${VPN_NAME}-backup" do
@@ -170,8 +170,8 @@ coreo_aws_iam_policy "${VPN_NAME}-backup" do
     {
       "Effect": "Allow",
       "Resource": [
-          "arn:aws:s3:::${BACKUP_BUCKET}/${PLAN::region}/vpn/${ENV}/${VPN_NAME}",
-          "arn:aws:s3:::${BACKUP_BUCKET}/${PLAN::region}/vpn/${ENV}/${VPN_NAME}/*"
+          "arn:aws:s3:::${BACKUP_BUCKET}/${::region}/vpn/${ENV}/${VPN_NAME}",
+          "arn:aws:s3:::${BACKUP_BUCKET}/${::region}/vpn/${ENV}/${VPN_NAME}/*"
       ],
       "Action": [ 
           "s3:*"
@@ -197,7 +197,7 @@ coreo_aws_iam_policy "${VPN_NAME}-backup" do
     }
   ]
 }
-EOH
+  EOH
 end
 
 coreo_aws_iam_policy "${VPN_NAME}-vpn-key-files" do
@@ -236,7 +236,7 @@ coreo_aws_iam_policy "${VPN_NAME}-vpn-key-files" do
     }
   ]
 }
-EOH
+  EOH
 end
 
 coreo_aws_iam_instance_profile "${VPN_NAME}" do
@@ -255,7 +255,7 @@ coreo_aws_ec2_instance "${VPN_NAME}" do
 end
 
 coreo_aws_ec2_autoscaling "${VPN_NAME}" do
-  action :sustain 
+  action :sustain
   minimum 1
   maximum 1
   server_definition "${VPN_NAME}"
