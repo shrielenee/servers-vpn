@@ -170,8 +170,8 @@ coreo_aws_iam_policy "${VPN_NAME}-backup" do
     {
       "Effect": "Allow",
       "Resource": [
-          "arn:aws:s3:::${BACKUP_BUCKET}/${REGION}/vpn/${ENV}/${VPN_NAME}",
-          "arn:aws:s3:::${BACKUP_BUCKET}/${REGION}/vpn/${ENV}/${VPN_NAME}/*"
+          "arn:aws:s3:::${BACKUP_BUCKET}/${PLAN::region}/vpn/${ENV}/${VPN_NAME}",
+          "arn:aws:s3:::${BACKUP_BUCKET}/${PLAN::region}/vpn/${ENV}/${VPN_NAME}/*"
       ],
       "Action": [ 
           "s3:*"
@@ -247,7 +247,7 @@ end
 coreo_aws_ec2_instance "${VPN_NAME}" do
   action :define
   upgrade_trigger "1"
-  image_id "${VPN_AMI_ID}"
+  image_id "${AWS_LINUX_AMI}"
   size "${VPN_INSTANCE_TYPE}"
   security_groups ["${VPN_NAME}-sg"]
   ssh_key "${VPN_SSH_KEY_NAME}"
