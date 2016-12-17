@@ -88,10 +88,11 @@ variables:
     overrides:
     required: true
   BACKUP_BUCKET_REGION:
-    default: PLAN::region
+    default: "PLAN::region"
     description: the region where there vpn backups bucket was created
     overrides:
     required: true
+    type: null
   VPN_KEY_BUCKET:
     default: 
     description: the name of the bucket in which we should retrieve and/or store vpn keys
