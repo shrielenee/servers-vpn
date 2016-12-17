@@ -73,19 +73,17 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-elb-sg" do
   action :sustain
   description "Open vpn to the world"
   vpc "${VPC_NAME}"
-  allows [
-             {
-                 :direction => :ingress,
-                 :protocol => :tcp,
-                 :ports => [1199],
-                 :cidrs => $ {VPN_ACCESS_CIDRS},
+  allows [{
+              :direction => :ingress,
+              :protocol => :tcp,
+              :ports => [1199],
+              :cidrs => ${VPN_ACCESS_CIDRS}
   }, {
       :direction => :egress,
       :protocol => :tcp,
       :ports => ["0..65535"],
-      :cidrs => $ {VPN_ACCESS_CIDRS},
-  }
-  ]
+      :cidrs => ${VPN_ACCESS_CIDRS}
+  }]
 end
 
 coreo_aws_ec2_elb "${VPN_NAME}-elb" do
@@ -121,24 +119,22 @@ coreo_aws_ec2_securityGroups "${VPN_NAME}-sg" do
   action :sustain
   description "Open vpn connections to the world"
   vpc "${VPC_NAME}"
-  allows [
-             {
-                 :direction => :ingress,
-                 :protocol => :tcp,
-                 :ports => [1199],
-                 :groups => ["${VPN_NAME}-elb-sg"],
-             }, {
-                 :direction => :ingress,
-                 :protocol => :tcp,
-                 :ports => [22],
-                 :cidrs => $ {VPN_SSH_ACCESS_CIDRS},
+  allows [{
+              :direction => :ingress,
+              :protocol => :tcp,
+              :ports => [1199],
+              :groups => ["${VPN_NAME}-elb-sg"]
+          }, {
+              :direction => :ingress,
+              :protocol => :tcp,
+              :ports => [22],
+              :cidrs => ${VPN_SSH_ACCESS_CIDRS}
   }, {
       :direction => :egress,
       :protocol => :tcp,
       :ports => ["0..65535"],
       :cidrs => ["0.0.0.0/0"],
-  }
-  ]
+  }]
 end
 
 coreo_aws_iam_policy "${VPN_NAME}-route53" do
