@@ -26,14 +26,8 @@ Backups will be performed every hour. The usernames allowed in the system are si
 ### `BACKUP_BUCKET`:
   * description: the name of the bucket in which we should back things up
 
-### `BACKUP_BUCKET_REGION`:
-  * description: the region where there vpn backups bucket was created
-
 ### `VPN_KEY_BUCKET`:
   * description: the name of the bucket in which we should retrieve and/or store vpn keys
-
-### `VPN_KEY_BUCKET_REGION`:
-  * description: the region where there vpn key bucket was created
 
 ### `VPN_SSH_KEY_NAME`:
   * description: What key should the vpn instance be launched with?
@@ -87,10 +81,6 @@ Backups will be performed every hour. The usernames allowed in the system are si
   * description: 
   * default: 0.0.0.0/0
 
-### `REGION`:
-  * description: the region we are launching in
-  * default: PLAN::region
-
 ### `VPN_DNS_PREFIX`:
   * description: the dns entry to create for the VPN server (<prefix>.<zone>)
   * default: vpn
@@ -104,6 +94,16 @@ Backups will be performed every hour. The usernames allowed in the system are si
 ### `VPN_NAME`:
   * description: the name of the vpn server to launch
   * default: vpn
+
+
+### `BACKUP_BUCKET_REGION`:
+  * description: the region where there vpn backups bucket was created
+  * default: PLAN::region
+
+
+### `VPN_KEY_BUCKET_REGION`:
+  * description: the region where there vpn key bucket was created
+  * default: PLAN::region
 
 
 ### `VPN_SSH_ACCESS_CIDRS`:
@@ -124,8 +124,7 @@ Backups will be performed every hour. The usernames allowed in the system are si
 
 ## Optional variables with no default
 
-### `VPN_AMI_ID`:
-  * description: the ami id for the VPN server
+**None**
 
 ## Tags
 1. Self-Healing
